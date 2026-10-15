@@ -1,0 +1,62 @@
+:root{
+  --bg:#05080d; --ink:#dbeaf5; --dim:#6f8aa3;
+  --glow:#5fe8ff; --warm:#ffb45c; --violet:#b388ff;
+  --line:rgba(95,232,255,.22);
+  --font-display:"Rajdhani","Segoe UI",system-ui,sans-serif;
+  --font-mono:"Share Tech Mono","SFMono-Regular",Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-display);overflow:hidden;overscroll-behavior:none;touch-action:none}
+#stage{position:fixed;inset:0;overflow:hidden;cursor:none}
+#stage.touch{cursor:auto}
+#gl,#hud{position:absolute;inset:0;width:100%;height:100%;display:block}
+#hud{pointer-events:none;z-index:30}
+#vignette{position:absolute;inset:0;pointer-events:none;z-index:35;
+  background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.7) 100%)}
+#chrome{position:absolute;inset:0;pointer-events:none;z-index:40;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-bottom,0px))}
+#title{position:absolute;left:max(28px,env(safe-area-inset-left,0px));top:max(22px,env(safe-area-inset-top,0px))}
+#title h1{margin:0;font-size:15px;letter-spacing:.42em;text-transform:uppercase;color:var(--glow);font-weight:600;
+  text-shadow:0 0 18px rgba(95,232,255,.6)}
+#title p{margin:4px 0 0;font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;color:var(--dim)}
+#status{position:absolute;right:max(28px,env(safe-area-inset-right,0px));top:max(22px,env(safe-area-inset-top,0px));text-align:right;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;color:var(--dim);max-width:46vw;line-height:1.7}
+#status b{color:var(--glow);font-weight:400}
+#st-gesture{color:var(--warm);min-height:1.7em}
+#help,#help-touch{position:absolute;left:max(28px,env(safe-area-inset-left,0px));bottom:max(22px,env(safe-area-inset-bottom,0px));
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--dim);line-height:1.9}
+#help i,#help-touch i{font-style:normal;color:var(--ink)}
+.touch-only{display:none}
+#stage.touch .touch-only{display:block}
+#stage.touch .desktop-only{display:none}
+#buttons{position:absolute;left:50%;bottom:max(22px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);
+  display:flex;gap:10px;pointer-events:auto;z-index:50;flex-wrap:wrap;justify-content:center}
+button{font-family:var(--font-mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--glow);
+  background:rgba(5,8,13,.72);border:1px solid var(--line);padding:10px 16px;border-radius:3px;cursor:pointer}
+button:hover,button:focus-visible{border-color:var(--glow);outline:none;box-shadow:0 0 14px rgba(95,232,255,.3)}
+button[disabled]{opacity:.5;cursor:default}
+button[hidden]{display:none}
+#pip{position:absolute;right:max(28px,env(safe-area-inset-right,0px));bottom:max(22px,env(safe-area-inset-bottom,0px));width:220px;aspect-ratio:4/3;
+  border:1px solid var(--line);background:#000;overflow:hidden;border-radius:3px;z-index:45;max-width:40vw}
+#pip video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);opacity:.85}
+#pip canvas{position:absolute;inset:0;width:100%;height:100%}
+#pip.off{display:none}
+#memory-caption{position:absolute;left:50%;bottom:max(84px,calc(env(safe-area-inset-bottom,0px) + 84px));transform:translateX(-50%);
+  width:min(680px,calc(100vw - 32px));text-align:center;z-index:42;pointer-events:none;
+  animation:rise .5s cubic-bezier(.2,.8,.2,1)}
+#memory-caption .year{font-family:var(--font-mono);font-size:12px;letter-spacing:.3em;color:var(--glow)}
+#memory-caption h2{margin:4px 0 2px;font-size:clamp(26px,4.5vw,44px);font-weight:700;letter-spacing:.02em;line-height:1.05;
+  text-shadow:0 0 24px rgba(95,232,255,.45);text-wrap:balance}
+#memory-caption .grp{font-size:13px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase}
+#memory-caption p{margin:10px auto 0;max-width:56ch;font-size:16px;line-height:1.4;color:#b9cde0}
+@keyframes rise{from{opacity:0;transform:translate(-50%,16px)}to{opacity:1;transform:translate(-50%,0)}}
+@media (max-width:700px){
+  #status{display:none}
+  #title h1{font-size:12px}
+  #help-touch{font-size:10px;max-width:60vw}
+  #memory-caption p{font-size:14px}
+  #pip{width:120px}
+}
+@media (prefers-reduced-motion:reduce){#memory-caption{animation:none}}

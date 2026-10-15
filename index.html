@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#05080d">
+<title>Portal Wall</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap">
+<link rel="stylesheet" href="src/style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "./vendor/three/three.module.js",
+  "three/addons/": "./vendor/three/addons/",
+  "@mediapipe/tasks-vision": "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs",
+  "@mkkellogg/gaussian-splats-3d": "https://cdn.jsdelivr.net/npm/@mkkellogg/gaussian-splats-3d@0.4.6/build/gaussian-splats-3d.module.js"
+} }
+</script>
+</head>
+<body>
+<div id="stage">
+  <canvas id="gl"></canvas>
+  <canvas id="hud"></canvas>
+  <div id="vignette"></div>
+
+  <div id="chrome">
+    <header id="title">
+      <h1>Portal Wall</h1>
+      <p id="subtitle">MIT MEDIA LAB · 1985 → 2026</p>
+    </header>
+    <div id="status">
+      <div>MODE <b id="st-mode">mouse</b></div>
+      <div id="st-detail">move the mouse · click to grab · wheel to scroll</div>
+      <div id="st-gesture"></div>
+    </div>
+    <div id="help" class="desktop-only">
+      <div><i>point</i> &amp; hold on a memory — open it</div>
+      <div><i>pinch</i> or <i>fist</i> + move — grab the timeline</div>
+      <div><i>open hand</i> sweep — flick through years</div>
+      <div><i>two hands</i> apart / together — stretch time</div>
+      <div><i>palm push</i> toward the camera — close</div>
+      <div><i>move your head</i> while open — look into it</div>
+    </div>
+    <div id="help-touch" class="touch-only">
+      <div><i>swipe</i> — move through time · <i>tap</i> — open</div>
+      <div><i>pinch</i> — stretch time · <i>tilt</i> or <i>move your head</i> — look in</div>
+    </div>
+    <div id="buttons">
+      <button id="btn-start">Start camera</button>
+      <button id="btn-head" hidden>Head tracking</button>
+      <button id="btn-pip" hidden>Mirror</button>
+      <button id="btn-fs">Fullscreen</button>
+    </div>
+  </div>
+
+  <div id="pip" class="off"><video id="cam" playsinline muted autoplay></video><canvas id="pipc"></canvas></div>
+  <div id="memory-caption" hidden>
+    <div class="year" id="mc-year"></div>
+    <h2 id="mc-title"></h2>
+    <div class="grp" id="mc-group"></div>
+    <p id="mc-blurb"></p>
+  </div>
+</div>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
