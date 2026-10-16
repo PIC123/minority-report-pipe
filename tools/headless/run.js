@@ -18,7 +18,7 @@ const args = Object.fromEntries(process.argv.slice(2).reduce((a, x, i, arr) => {
   await page.waitForTimeout(1500);
   if (args.camera) { await page.click(args.mobile ? '#btn-head' : '#btn-start'); }
   await page.waitForTimeout(Number(args.wait || 8000));
-  if (args.eval) { try { const r = await page.evaluate(args.eval); console.log('EVAL', JSON.stringify(r, null, 1)); } catch (e) { console.log('EVAL ERROR', e.message); } }
+  if (args.eval) { try { const r = await page.evaluate(args.eval); console.log('EVAL', JSON.stringify(r, null, 1)); } catch (e) { console.log('EVAL ERROR', e.message); } await page.waitForTimeout(Number(args.after || 0)); }   // --after N: settle time after --eval
   const st = await page.evaluate(() => ({ mode: document.getElementById('st-mode')?.textContent, detail: document.getElementById('st-detail')?.textContent, gesture: document.getElementById('st-gesture')?.textContent, dbg: window.__portal?.snapshot?.() }));
   console.log('STATUS', JSON.stringify(st, null, 1));
   if (args.shot) await page.screenshot({ path: args.shot });

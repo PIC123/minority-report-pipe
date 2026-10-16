@@ -64,7 +64,7 @@ export class MemoryView {
     if (!wasOpen) { this.state = 'opening'; this.progress = 0; if (from) { this.from.copy(from.position); this.fromScale = from.scale; } else { this.from.set(0, 0, 0); this.fromScale = .3; } }
     else this.state = 'open';   // switching memories: stay in place, just re-reveal
     const W = this.scene.W, H = this.scene.H;
-    const maxW = Math.min(W * .74, 1100), maxH = H * .6;
+    const maxW = Math.min(W * .74, 1100), maxH = Math.min(H * .55, H - 330);   // leave room for the caption below
     if (entry.splat) { await this._openSplat(entry, maxW, maxH); return; }
     await this._openImage(entry, maxW, maxH);
   }
@@ -136,7 +136,7 @@ export class MemoryView {
     if (this.state === 'closing') { this.progress = Math.max(0, this.progress - speed * 1.4); if (this.progress <= 0) { this.state = 'closed'; this.group.visible = false; this._dispose(); return 0; } }
     const e = this.progress < .5 ? 2 * this.progress * this.progress : 1 - Math.pow(-2 * this.progress + 2, 2) / 2;  // easeInOutQuad
     // grow out of the card's spot toward screen center, z slightly toward the camera
-    this.group.position.lerpVectors(this.from, new THREE.Vector3(0, 48, 120), e);
+    this.group.position.lerpVectors(this.from, new THREE.Vector3(0, 100, 120), e);   // sits above screen centre; the camera keeps aiming at y=0 so the caption fits below
     const s = THREE.MathUtils.lerp(this.fromScale * .5, 1, e); this.group.scale.setScalar(s);
     this.revealT = (this.revealT || 0) + dt;
     if (this.mesh) { this.mesh.material.uniforms.reveal.value = Math.min(1, Math.max(0, (this.progress - .35) / .65), this.revealT * 1.4); this.mesh.material.uniforms.t.value = this.t; }
@@ -145,7 +145,7 @@ export class MemoryView {
     // off-axis camera: the viewer's head moves, the camera moves with it and keeps aiming at the memory
     const cam = this.scene.camera, hx = (head.x + this.orbit.x) * 320 * e, hy = (-head.y + this.orbit.y) * 200 * e;
     cam.position.x += (hx - cam.position.x) * .1; cam.position.y += (hy - cam.position.y) * .1;
-    cam.lookAt(0, 48, 60);
+    cam.lookAt(0, 0, 60);
     return e;
   }
 }

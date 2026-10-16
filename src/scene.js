@@ -186,7 +186,8 @@ export class TimelineScene {
     }
     // while a memory is open the timeline recedes into the fog but stays navigable
     this.track.position.z += (-dim * 1100 - this.track.position.z) * .1;
-    this.bloom.strength = .9 + dim * .4;
+    // real photos have highlights the placeholder art never had: ease the bloom off while a memory is open so white walls don't flare
+    this.bloom.strength = .9 - dim * .45; this.bloom.threshold = .78 + dim * .14;
   }
 
   render() { this.composer.render(); }
