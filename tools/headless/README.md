@@ -17,8 +17,9 @@ node tools/headless/gestures.js
 # open a Gaussian splat through memory.js and report the viewer's state (slow under software GL; use a small viewport)
 VW=800 VH=450 node tools/headless/splat.js '{"id":"x","year":2024,"title":"x","group":"x","splat":"assets/splats/nike.splat"}' 12000 splat.png
 
-# phone layout
+# phone layout, and real touch events (tap opens, swipe scrolls, swipe down closes, pinch zooms)
 node tools/headless/run.js --mobile "iPhone 13" --shot phone.png
+node tools/headless/touch.js
 ```
 
 Make a fake-webcam clip from a still (Chromium wants y4m or mjpeg):

@@ -1,46 +1,228 @@
 {
-  "title": "Portal Wall",
-  "subtitle": "MIT Media Lab · 1985 → 2026",
-  "range": [1985, 2027],
-  "_note": "Placeholder entries sketched for the prototype. Verify every date/name and swap in real archive images (assets/img/<id>.jpg) and depth maps (assets/depth/<id>.png) before showing it. Optional per entry: 'video' (mp4), 'splat' (.ply/.splat/.ksplat for a Gaussian splat), 'depthScale' (0..1, default 0.35).",
-  "entries": [
-    {"id":"lab-opens","year":1985,"title":"The Media Lab opens","group":"Wiesner Building","hue":195,
-     "blurb":"Nicholas Negroponte and Jerome Wiesner open the Lab in I.M. Pei's E15, on the bet that computing, publishing and broadcast would converge."},
-    {"id":"put-that-there","year":1987,"title":"Put-That-There lineage","group":"Architecture Machine Group","hue":210,
-     "blurb":"Speech plus gesture, pointing at a wall-sized display. The direct ancestor of what your hands are doing right now."},
-    {"id":"things-that-think","year":1992,"title":"Things That Think","group":"Consortium","hue":170,
-     "blurb":"Everyday objects get sensing and computation, years before anyone said 'Internet of Things'."},
-    {"id":"being-digital","year":1995,"title":"Being Digital","group":"Negroponte","hue":40,
-     "blurb":"Bits, not atoms. The book that explained the Lab's worldview to everyone else."},
-    {"id":"tangible-bits","year":1997,"title":"Tangible Bits","group":"Tangible Media · Ishii","hue":150,
-     "blurb":"Grasp and manipulate digital information through physical objects and surfaces."},
-    {"id":"affective-computing","year":1997,"title":"Affective Computing","group":"Picard","hue":330,
-     "blurb":"Machines that recognize, interpret and respond to human emotion. The field gets its name here."},
-    {"id":"e-ink","year":1997,"title":"E Ink","group":"Spin-out","hue":30,
-     "blurb":"Electrophoretic paper leaves the Lab and ends up in every e-reader."},
-    {"id":"mindstorms","year":1998,"title":"LEGO Mindstorms","group":"Lifelong Kindergarten","hue":55,
-     "blurb":"The programmable brick: Papert's constructionism, boxed and sold."},
-    {"id":"minority-report","year":2002,"title":"Minority Report","group":"Underkoffler · Tangible Media","hue":190,
-     "blurb":"The g-speak gestural interface seen in the film was designed by Media Lab alumni. This wall is a nod to it.","depthScale":0.45},
-    {"id":"olpc","year":2005,"title":"One Laptop per Child","group":"OLPC","hue":95,
-     "blurb":"The $100 laptop. Ambitious, contested, still shaping arguments about education technology."},
-    {"id":"scratch","year":2007,"title":"Scratch","group":"Lifelong Kindergarten","hue":25,
-     "blurb":"Block programming for kids, now one of the largest creative communities online."},
-    {"id":"sixthsense","year":2009,"title":"SixthSense","group":"Fluid Interfaces · Mistry","hue":275,
-     "blurb":"A wearable projector and camera that turns any surface into an interface."},
-    {"id":"opera-of-the-future","year":2012,"title":"Opera of the Future","group":"Machover","hue":300,
-     "blurb":"Hyperinstruments and city symphonies: music as an interface to collective memory."},
-    {"id":"inform","year":2014,"title":"inFORM","group":"Tangible Media","hue":160,
-     "blurb":"A shape display. Pins rise and fall so remote hands can push objects across a table."},
-    {"id":"openag","year":2016,"title":"Open Agriculture","group":"OpenAg","hue":110,
-     "blurb":"Food computers and climate recipes: an experiment in open hardware for growing."},
-    {"id":"space-exploration","year":2018,"title":"Space Exploration Initiative","group":"SEI","hue":230,
-     "blurb":"Zero-g flights and payloads to the ISS. The Lab's research leaves the ground."},
-    {"id":"conformable-decoders","year":2020,"title":"Conformable Decoders","group":"Dagdeviren","hue":345,
-     "blurb":"Flexible electronics that read the body's mechanical signals."},
-    {"id":"ai-companions","year":2023,"title":"AI Companions","group":"Fluid Interfaces · Maes","hue":260,
-     "blurb":"Wearables and agents built to augment attention and memory instead of hijacking them."},
-    {"id":"forty-years","year":2026,"title":"40 Years","group":"You are here","hue":195,
-     "blurb":"Four decades of demos. This wall is one more."}
-  ]
+ "title": "Portal Wall",
+ "subtitle": "MIT Media Lab · 1985 → 2026",
+ "range": [
+  1979,
+  2027
+ ],
+ "_note": "Entries verified against the sources in each \"source\" field; images are freely licensed, see CREDITS.md. Optional per entry: depthScale (0..1, default 0.35), splat/splatFit/splatRotation/splatPosition/splatScale for a Gaussian splat memory.",
+ "entries": [
+  {
+   "id": "put-that-there",
+   "year": 1980,
+   "title": "Put-That-There",
+   "group": "Architecture Machine Group · Bolt",
+   "blurb": "Richard Bolt's 'Put-That-There' paired speech recognition with pointing at a wall-sized display, so a pronoun and a gesture could move things around a map. The direct ancestor of what your hands are doing right now.",
+   "credit": "no freely licensed archive image found; typographic placeholder",
+   "source": "https://www.media.mit.edu/publications/put-that-there-voice-and-gesture-at-the-graphics-interface/"
+  },
+  {
+   "id": "lab-opens",
+   "year": 1985,
+   "title": "The Media Lab opens",
+   "group": "Negroponte & Wiesner · Wiesner Building E15",
+   "blurb": "Nicholas Negroponte and Jerome Wiesner open the Lab in I.M. Pei's Wiesner Building, on the bet that computing, publishing and broadcast would converge.",
+   "credit": "John Phelan / Wiesner Building, MIT, Cambridge MA (2011) / CC BY 3.0",
+   "source": "https://www.media.mit.edu/about/history/",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:Wiesner_Building%2C_MIT%2C_Cambridge_MA.jpg"
+  },
+  {
+   "id": "being-digital",
+   "year": 1995,
+   "title": "Being Digital",
+   "group": "Negroponte",
+   "blurb": "Bits, not atoms. Negroponte's 1995 book explained the Lab's worldview to everyone else and predicted an entirely digital society.",
+   "credit": "Gin Kai, U.S. Naval Academy, Photographic Studio / Nicholas Negroponte, Forrestal Lecture, US Naval Academy (2009) / CC BY-SA 3.0",
+   "source": "https://en.wikipedia.org/wiki/Being_Digital",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:Nicholas_Negroponte_USNA_20090415.jpg"
+  },
+  {
+   "id": "things-that-think",
+   "year": 1995,
+   "title": "Things That Think",
+   "group": "Consortium · Negroponte & Gershenfeld",
+   "blurb": "The Things That Think consortium starts embedding sensing and computation into everyday objects and environments, years before anyone said 'Internet of Things'.",
+   "credit": "no freely licensed archive image found; typographic placeholder",
+   "source": "https://www.media.mit.edu/speech/old/papers/1996/schmandt_CHI96_after_ten_years.pdf"
+  },
+  {
+   "id": "affective-computing",
+   "year": 1997,
+   "title": "Affective Computing",
+   "group": "Affective Computing · Picard",
+   "blurb": "Rosalind Picard's book argues that machines must recognize, interpret and respond to human emotion. The field gets its name here.",
+   "credit": "Joi Ito / Faculty meeting at MIT Media Lab: Kent Larson, Deb Roy, Rosalind Picard (2014) / CC BY 2.0",
+   "source": "https://en.wikipedia.org/wiki/Rosalind_Picard",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:Kent%2C_Deb_and_Roz_%2811881442064%29.jpg"
+  },
+  {
+   "id": "e-ink",
+   "year": 1997,
+   "title": "E Ink",
+   "group": "Spin-out · Jacobson",
+   "blurb": "Joseph Jacobson's group and two MIT undergraduates spin out E Ink. Electrophoretic paper leaves the Lab and ends up in every e-reader.",
+   "credit": "htomari / E-ink display on Amazon Kindle 7th gen (2018) / CC BY-SA 2.0",
+   "source": "https://en.wikipedia.org/wiki/E_Ink",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:E-ink_display_on_Amazon_Kindle_7th_gen_%2845409487092%29.jpg"
+  },
+  {
+   "id": "tangible-bits",
+   "year": 1997,
+   "title": "Tangible Bits",
+   "group": "Tangible Media · Ishii",
+   "blurb": "Hiroshi Ishii and Brygg Ullmer's CHI 97 paper: grasp and manipulate digital information through physical objects and surfaces, coupling the worlds of bits and atoms.",
+   "credit": "jeanbaptisteparis / Hiroshi Ishii explains Topobo to Fumihiko Maki and Gary Kamemoto, MIT Media Lab (2010) / CC BY-SA 2.0",
+   "source": "https://tangible.media.mit.edu/project/tangible-bits/",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:Hiroshi_Ishii_Fumihiko_Maki_and_Gary_Kamemoto_20100303.jpg"
+  },
+  {
+   "id": "mindstorms",
+   "year": 1998,
+   "title": "LEGO Mindstorms RCX",
+   "group": "Lifelong Kindergarten · Resnick",
+   "blurb": "The programmable brick from Resnick's group, named for Papert's book, ships with LEGO as the Robotics Invention System: constructionism, boxed and sold.",
+   "credit": "Jean-Baptiste LABRUNE / LEGO Mindstorms RCX (2010) / CC BY-SA 2.0",
+   "source": "https://en.wikipedia.org/wiki/Lego_Mindstorms",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:Mindstorms_RCX.jpg"
+  },
+  {
+   "id": "bits-and-atoms",
+   "year": 2001,
+   "title": "Center for Bits and Atoms",
+   "group": "CBA · Gershenfeld",
+   "blurb": "Neil Gershenfeld's Center for Bits and Atoms launches on an NSF award. Its outreach fab labs seed a worldwide network of digital-fabrication workshops.",
+   "credit": "jeanbaptisteparis / Neil Gershenfeld (2010) / CC BY-SA 2.0",
+   "source": "https://cba.mit.edu/about/index.html",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:Neil_Gershenfeld_%284902288881%29.jpg"
+  },
+  {
+   "id": "minority-report",
+   "year": 2002,
+   "title": "Minority Report",
+   "group": "Underkoffler · Tangible Media alum",
+   "blurb": "John Underkoffler, out of Ishii's Tangible Media Group, designs the film's gestural interface as its science adviser, then builds it for real as Oblong's g-speak. This wall is a nod to it.",
+   "credit": "Steve Jurvetson / John Underkoffler in the g-speak media matrix, TED 2010 / CC BY 2.0",
+   "source": "https://news.mit.edu/2014/startup-oblong-industries-gesture-control-interface-0905",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:Media_Matrix%2C_TED_2010.jpg",
+   "depthScale": 0.45
+  },
+  {
+   "id": "olpc",
+   "year": 2005,
+   "title": "One Laptop per Child",
+   "group": "OLPC · Negroponte",
+   "blurb": "Announced at Davos in January and unveiled with Kofi Annan in Tunis that November: the $100 laptop. The XO-1 enters production in 2007.",
+   "credit": "World Economic Forum / Nicholas Negroponte presents the US$100 Laptop, World Economic Forum, Davos 2006 / CC BY-SA 2.0",
+   "source": "https://news.mit.edu/2005/laptop-1116",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:US%24100_Laptop_-_World_Economic_Forum_Annual_Meeting_Davos_2006.jpg"
+  },
+  {
+   "id": "scratch",
+   "year": 2007,
+   "title": "Scratch",
+   "group": "Lifelong Kindergarten · Resnick",
+   "blurb": "Block programming for kids launches in May 2007. By 2023 more than 100 million users had shared over 120 million projects.",
+   "credit": "Wikimedia Commons contributor (screenshot); Scratch by MIT Media Lab / Scratch 3.0 editor screenshot (2023) / CC BY-SA 2.0",
+   "source": "https://en.wikipedia.org/wiki/Scratch_(programming_language)",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:Scratch_3.0_editor.png"
+  },
+  {
+   "id": "drawdio",
+   "year": 2008,
+   "title": "Drawdio",
+   "group": "Lifelong Kindergarten · Silver",
+   "blurb": "Jay Silver's pencil that draws music: a 555 timer, graphite and your own body close the circuit. Sold as a kit, it became a maker-movement classic.",
+   "credit": "Mike Lee / Two Adafruit Drawdio kits (2009) / CC BY 2.0",
+   "source": "https://www.media.mit.edu/projects/drawdio/overview/",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:Two_Adafruit_Drawdio_Kits.jpg"
+  },
+  {
+   "id": "sixthsense",
+   "year": 2009,
+   "title": "SixthSense",
+   "group": "Fluid Interfaces · Mistry & Maes",
+   "blurb": "Pranav Mistry's pendant-sized projector and camera turn any surface into an interface. Shown at TED in February 2009, it became one of TED's most-watched demos.",
+   "credit": "Pranav Mistry / SixthSense framing-gesture camera, Pranav Mistry / Public domain",
+   "source": "https://www.media.mit.edu/publications/sixthsense-a-wearable-gestural-interface/",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:SixthSense_Camera.jpg"
+  },
+  {
+   "id": "death-and-the-powers",
+   "year": 2010,
+   "title": "Death and the Powers",
+   "group": "Opera of the Future · Machover",
+   "blurb": "Tod Machover's robot opera, libretto by Robert Pinsky, premieres at the Opéra de Monte-Carlo in September 2010 and becomes a 2012 Pulitzer finalist.",
+   "credit": "Joi Ito / Tod Machover (2007) / CC BY 2.5",
+   "source": "https://www.media.mit.edu/projects/death-and-the-powers-redefining-opera/overview/",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:Tod_Machover_JI1.jpg"
+  },
+  {
+   "id": "e14",
+   "year": 2010,
+   "title": "E14 opens",
+   "group": "Maki & Associates",
+   "blurb": "Fumihiko Maki's glass-and-steel extension opens on March 5, 2010: six storeys of double-height labs built to make the work visible.",
+   "credit": "Sayamindu Dasgupta / MIT Media Lab building E14 (2011) / CC BY-SA 2.0",
+   "source": "https://thetech.com/2010/03/12/medialabext-v130-n12",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:MIT_Media_Lab_%28E14%29.jpg"
+  },
+  {
+   "id": "inform",
+   "year": 2013,
+   "title": "inFORM",
+   "group": "Tangible Media · Follmer, Leithinger, Ishii",
+   "blurb": "A dynamic shape display: a grid of motorized pins rises and falls so remote hands can push objects across a table.",
+   "credit": "no freely licensed archive image found; typographic placeholder",
+   "source": "https://tangible.media.mit.edu/project/inform/"
+  },
+  {
+   "id": "silk-pavilion",
+   "year": 2013,
+   "title": "Silk Pavilion",
+   "group": "Mediated Matter · Oxman",
+   "blurb": "6,500 silkworms finish a dome of machine-laid silk threads: Neri Oxman's group lets biology do the fabrication.",
+   "credit": "Neri Oxman / Silk Pavilion, silkworms at work (2013) / CC BY-SA 4.0",
+   "source": "https://www.media.mit.edu/projects/silk-pavilion/overview/",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:Silk_Pavilion_silkworms_at_work.jpg"
+  },
+  {
+   "id": "bionic-ballet",
+   "year": 2014,
+   "title": "Bionic ballet",
+   "group": "Biomechatronics · Herr",
+   "blurb": "At TED 2014 Hugh Herr's group puts Boston Marathon survivor Adrianne Haslet-Davis back on the dance floor, on a prosthesis built in 200 days.",
+   "credit": "Steve Jurvetson / The Debut of Bionic Ballet, TED 2014 / CC BY 2.0",
+   "source": "https://www.media.mit.edu/research/highlights/hugh-herr-ted-2014-defeating-disability-bionics.html",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:The_Debut_of_Bionic_Ballet_%2813480669224%29.jpg"
+  },
+  {
+   "id": "space-exploration",
+   "year": 2016,
+   "title": "Space Exploration Initiative",
+   "group": "SEI · Ekblaw",
+   "blurb": "Ariel Ekblaw founds the Initiative in May 2016. Its first zero-g research flight follows in November 2017, then suborbital rockets and payloads to the ISS.",
+   "credit": "NASA/Jack Pfaller / Zero Gravity Corp. Boeing 727, the aircraft type used for the Lab's parabolic flights (KSC, 2007; not a Lab flight) / public domain",
+   "source": "https://www.media.mit.edu/groups/space-exploration/overview/",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:Boeing_727_aircraft_owned_by_Zero_Gravity_Corp._%28NASA%29_%28475109232%29.jpg"
+  },
+  {
+   "id": "alterego",
+   "year": 2018,
+   "title": "AlterEgo",
+   "group": "Fluid Interfaces · Kapur & Maes",
+   "blurb": "Electrodes along the jaw read silent speech and bone conduction whispers the answer back: Arnav Kapur's wearable lets you talk to a machine without a sound.",
+   "credit": "no freely licensed archive image found; typographic placeholder",
+   "source": "https://news.mit.edu/2018/computer-system-transcribes-words-users-speak-silently-0404"
+  },
+  {
+   "id": "forty-years",
+   "year": 2026,
+   "title": "40 Years",
+   "group": "You are here",
+   "blurb": "Founded in 1985, the Lab opened its fortieth year with an alumni reunion in October 2025 and marks the anniversary itself on October 21-24, 2026. Four decades of demos. This wall is one more.",
+   "credit": "ajay_suresh / MIT Media Lab, Building E14 (November 2025) / CC BY 4.0",
+   "source": "https://www.media.mit.edu/events/the-media-lab-s-40th-celebration/",
+   "imageSource": "https://commons.wikimedia.org/wiki/File:MIT_Media_Lab_%2854959750947%29.jpg"
+  }
+ ]
 }

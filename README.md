@@ -49,9 +49,9 @@ Everything lives in `data/timeline.json`. Each entry:
  "depthScale":0.35, "splat":"assets/splats/tangible-bits.ksplat"}
 ```
 
-`img`/`depth` default to `assets/img/<id>.jpg` and `assets/depth/<id>.png`. `splat` is optional; if set, the memory opens as a Gaussian splat instead of a depth-displaced photo. The splat is auto-fitted into the window from its (2–98 percentile) bounds; `splatFit` (default 0.9, fraction of the window it fills), `splatScale` (extra multiplier), `splatPosition` (px offset) and `splatRotation` (quaternion `[x,y,z,w]`, default `[1,0,0,0]` = 180° about X because most scans come out y-down) tune placement. `tools/splat-check.html?file=…&rot=…&fit=…` is a bare viewer for finding those values. `credit` is shown nowhere yet but keeps the image attribution with the entry.
+`img`/`depth` default to `assets/img/<id>.jpg` and `assets/depth/<id>.png`. `splat` is optional; if set, the memory opens as a Gaussian splat instead of a depth-displaced photo. The splat is auto-fitted into the window from its (2–98 percentile) bounds; `splatFit` (default 0.9, fraction of the window it fills), `splatScale` (extra multiplier), `splatPosition` (px offset) and `splatRotation` (quaternion `[x,y,z,w]`, default `[1,0,0,0]` = 180° about X because most scans come out y-down) tune placement. `tools/splat-check.html?file=…&rot=…&fit=…` is a bare viewer for finding those values, and `index.html?splat=assets/splats/nike.splat` appends a throwaway card so a splat can be tried in the real UI without editing the content. `credit` is shown nowhere yet but keeps the image attribution with the entry.
 
-**The shipped entries are placeholders.** Dates, names and attributions were sketched quickly for the prototype and need checking against the Lab's own archive before anyone sees this.
+The 22 shipped entries were checked against MIT News, media.mit.edu and group pages (each entry carries a `source` URL). Photos are freely licensed (CC BY / CC BY-SA / public domain, mostly from Wikimedia Commons) and listed with author and license in `CREDITS.md`; the `credit` line is shown under the blurb when a memory is open, which CC BY requires. Four milestones (Put-That-There, Things That Think, inFORM, AlterEgo) have no freely licensed photo, so they ship with a typographic placeholder card that says so: drop the Lab's own archive image at `assets/img/<id>.jpg` and rerun the depth script. Photo dates often differ from the milestone year (the people portraits especially); `CREDITS.md` states each one.
 
 ### Real photos → depth maps
 
@@ -60,7 +60,7 @@ pip install torch transformers pillow
 python3 tools/make_depth.py assets/img/*.jpg
 ```
 
-Uses Depth Anything V2 (small) on CPU, a couple of seconds per image. Bigger `depthScale` = deeper window; 0.3–0.5 looks right for most photos, lower for flat ones.
+Uses Depth Anything V2 (small) on CPU, a couple of seconds per image after a one-off model download. The shipped depth maps were made this way. Bigger `depthScale` = deeper window; 0.3–0.5 looks right for most photos, lower for flat ones (screenshots, the placeholder cards).
 
 ### Splats
 

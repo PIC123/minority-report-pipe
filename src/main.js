@@ -10,6 +10,9 @@ import { buildTunePanel } from './tune-panel.js';
 const $ = id => document.getElementById(id);
 const stage = $('stage'), gl = $('gl'), hudCanvas = $('hud'), video = $('cam'), pip = $('pip'), pipc = $('pipc');
 const data = await (await fetch('data/timeline.json')).json();
+// ?splat=assets/splats/nike.splat adds a throwaway card at the end of the timeline to try a Gaussian splat in the real UI
+const qs = new URLSearchParams(location.search);
+if (qs.get('splat')) data.entries.push({ id: 'splat-test', year: data.range[1] - 1, title: 'Splat test', group: 'drop-in · not content', blurb: 'A Gaussian splat loaded from ' + qs.get('splat') + '. Move your head to look around it.', splat: qs.get('splat'), splatFit: +(qs.get('splatFit') || .9), splatRotation: qs.get('splatRot')?.split(',').map(Number) });
 $('subtitle').textContent = data.subtitle;
 
 const scene = new TimelineScene(gl, data);
@@ -33,7 +36,7 @@ function gesture(name) { $('st-gesture').textContent = name; hud.say(name); clea
 
 function showCaption(e) {
   const c = $('memory-caption'); if (!e) { c.hidden = true; return; }
-  $('mc-year').textContent = e.year; $('mc-title').textContent = e.title; $('mc-group').textContent = e.group; $('mc-blurb').textContent = e.blurb || '';
+  $('mc-year').textContent = e.year; $('mc-title').textContent = e.title; $('mc-group').textContent = e.group; $('mc-blurb').textContent = e.blurb || ''; $('mc-credit').textContent = e.credit ? 'Image: ' + e.credit : '';
   c.hidden = false; c.style.animation = 'none'; void c.offsetWidth; c.style.animation = '';
 }
 function openCard(card) {

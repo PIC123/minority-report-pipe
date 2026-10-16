@@ -88,13 +88,14 @@ export class TimelineScene {
       for (const [sx, sy] of [[-1, 1], [1, -1]]) { p.push(sx * hw, sy * hh, 0, sx * (hw - s), sy * hh, 0, sx * hw, sy * hh, 0, sx * hw, sy * (hh - s), 0); }
       const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); return g;
     })();
-    const seen = {};
+    const lastX = { '-1': -Infinity, '1': -Infinity };   // rightmost card edge per side, so dense years don't overlap
     this.data.entries.forEach((e, i) => {
       const grp = new THREE.Group();
-      const n = (seen[e.year] = (seen[e.year] || 0) + 1) - 1;
-      const side = i % 2 === 0 ? -1 : 1;
+      const side = i % 2 === 0 ? -1 : 1;                 // alternate above / below the axis
+      const x = Math.max((e.year - this.year0) * PX_PER_YEAR, lastX[side] + CARD_W + 24);   // pushed right if the previous card on this side is too close
+      lastX[side] = x;
       const depth = 0.15 + ((i * 7) % 5) * 0.17;        // 0.15 .. 0.83, nearer = larger z
-      grp.userData = { entry: e, x: (e.year - this.year0) * PX_PER_YEAR + n * 60, y: side * (165 + n * 100), z: depth * 260, depth, hover: 0 };
+      grp.userData = { entry: e, x, y: side * 165, z: depth * 260, depth, hover: 0 };
       grp.position.set(grp.userData.x, grp.userData.y, grp.userData.z);
       // image
       const imgMat = new THREE.MeshBasicMaterial({ color: 0x111820 });

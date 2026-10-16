@@ -65,6 +65,7 @@ button[hidden]{display:none}
   text-shadow:0 0 24px rgba(95,232,255,.45);text-wrap:balance}
 #memory-caption .grp{font-size:13px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase}
 #memory-caption p{margin:10px auto 0;max-width:56ch;font-size:16px;line-height:1.4;color:#b9cde0}
+#memory-caption .credit{margin-top:8px;font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;color:var(--dim);opacity:.8}
 @keyframes rise{from{opacity:0;transform:translate(-50%,16px)}to{opacity:1;transform:translate(-50%,0)}}
 @media (max-width:700px){
   #status{display:none}
