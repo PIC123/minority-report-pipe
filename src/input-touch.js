@@ -31,6 +31,7 @@ export class PointerInput {
   }
 
   _down(e) {
+    if (e.target.closest?.('button,a,input,select,details,summary,label')) return;   // let UI controls get their own click (pointer capture on the stage would steal it)
     this.el.setPointerCapture?.(e.pointerId); this.pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
     this.cursor.x = e.clientX; this.cursor.y = e.clientY; this.cursor.on = true;
     if (this.pts.size === 2) { const [a, b] = [...this.pts.values()]; this.pinch = { d0: Math.hypot(a.x - b.x, a.y - b.y) }; if (this.drag) { this.emit('dragEnd', { vx: 0, moved: this.drag.moved }); this.drag = null; } this.emit('zoomStart'); return; }

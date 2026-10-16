@@ -66,6 +66,10 @@ export class MemoryView {
     const W = this.scene.W, H = this.scene.H;
     const maxW = Math.min(W * .74, 1100), maxH = H * .6;
     if (entry.splat) { await this._openSplat(entry, maxW, maxH); return; }
+    await this._openImage(entry, maxW, maxH);
+  }
+
+  async _openImage(entry, maxW, maxH) {
     const imgSrc = entry.img || `assets/img/${entry.id}.jpg`, depSrc = entry.depth || `assets/depth/${entry.id}.png`;
     const [map, depth] = await Promise.all([this._tex(imgSrc, true), this._tex(depSrc, false).catch(() => null)]);
     if (this.entry !== entry) return;                       // superseded
@@ -82,13 +86,35 @@ export class MemoryView {
   async _openSplat(entry, maxW, maxH) {
     try {
       const GS = await import('@mkkellogg/gaussian-splats-3d');
-      const viewer = new GS.DropInViewer({ gpuAcceleratedSort: true, sharedMemoryForWorkers: false, showLoadingUI: false });
-      await viewer.addSplatScene(entry.splat, { splatAlphaRemovalThreshold: 5, showLoadingUI: false, position: entry.splatPosition || [0, 0, 0], rotation: entry.splatRotation || [0, 0, 0, 1], scale: entry.splatScale || [1, 1, 1] });
-      if (this.entry !== entry) { viewer.dispose?.(); return; }
-      this.splat = viewer; this.group.add(viewer);
+      // gpuAcceleratedSort stays off: with it on, 0.4.6 never uploads splat centers to the sort worker and draws 0 splats.
+      const viewer = new GS.DropInViewer({ gpuAcceleratedSort: false, sharedMemoryForWorkers: false, showLoadingUI: false, sphericalHarmonicsDegree: 0 });
+      const v = viewer.viewer, format = GS.LoaderUtils.sceneFormatFromPath(entry.splat);
+      if (format == null) throw new Error('unknown splat format: ' + entry.splat);
+      // preflight: a 404 inside the library surfaces as an uncaught error while its promise never settles
+      const head = await fetch(entry.splat, { method: 'HEAD' }).catch(() => null);
+      if (!head || !head.ok) throw new Error(`splat not reachable (${head ? head.status : 'network'}): ${entry.splat}`);
+      // The library's AbortablePromise does not reject through await, so wrap it (and give up after 60 s)
+      const buffer = await new Promise((res, rej) => { const ap = v.downloadSplatSceneToSplatBuffer(entry.splat, 5, undefined, false, undefined, format); ap.then(res); ap.catch(rej); setTimeout(() => rej(new Error('splat download timed out')), 60000); });
+      if (this.entry !== entry) { viewer.dispose(); return; }
       const w = Math.min(maxW, maxH * 1.6), h = w / 1.6; this.size = { w, h };
+      // The scene is in pixel units (1 unit = 1 css px at z=0) and a scan is in metres, so fit the splat into the
+      // window. The fit has to be baked into the splat scene's own transform: scaling a parent Object3D renders nothing.
+      // Most scans (Polycam / Luma / COLMAP) come out y-down, so default to a 180° flip about X (splatRotation overrides).
+      const rot = entry.splatRotation || [1, 0, 0, 0], q = new THREE.Quaternion(...rot), c = new THREE.Vector3();
+      const n = buffer.getSplatCount(), step = Math.max(1, Math.floor(n / 20000)), ax = [[], [], []];
+      for (let i = 0; i < n; i += step) { buffer.getSplatCenter(i, c); c.applyQuaternion(q); ax[0].push(c.x); ax[1].push(c.y); ax[2].push(c.z); }
+      const pct = (a, p) => a[Math.floor((a.length - 1) * p)]; ax.forEach(a => a.sort((x, y) => x - y));
+      const lo = ax.map(a => pct(a, .02)), hi = ax.map(a => pct(a, .98));            // 2..98 % bounds ignore floaters
+      const size = hi.map((x, i) => x - lo[i]), center = hi.map((x, i) => (x + lo[i]) / 2);
+      const user = Array.isArray(entry.splatScale) ? entry.splatScale[0] : (entry.splatScale ?? 1);
+      const fit = (entry.splatFit ?? .9) * h / Math.max(1e-6, size[1], size[0] * h / w, size[2] * .5) * user;
+      const pos = center.map((x, i) => -x * fit + (entry.splatPosition?.[i] || 0));
+      await Promise.race([v.addSplatBuffers([buffer], [{ rotation: rot, position: pos, scale: [fit, fit, fit], splatAlphaRemovalThreshold: 5 }], true, false, false, false, false, true), new Promise((_, rej) => setTimeout(() => rej(new Error('splat build timed out')), 60000))]);
+      if (this.entry !== entry) { viewer.dispose(); return; }
+      console.info(`splat ${entry.id}: ${n} splats, bounds ${size.map(x => x.toFixed(2))} → scale ${fit.toFixed(1)}`);
+      this.splat = viewer; this.group.add(viewer);
       this.frame.scale.set(w + 24, h + 24, 1); this.backplate.scale.set(w * 1.9, h * 2.2, 1); this.dust.scale.set(w, h, w * .5);
-    } catch (e) { console.error('splat load failed, falling back to image', e); const { splat, ...rest } = entry; return this.open(rest, null); }
+    } catch (e) { console.error('splat load failed, falling back to image', e); if (this.entry === entry) return this._openImage(entry, maxW, maxH); }
   }
 
   _tex(src, srgb) { return new Promise((res, rej) => this.loader.load(src, t => { if (srgb) t.colorSpace = THREE.SRGBColorSpace; t.minFilter = THREE.LinearFilter; res(t); }, undefined, rej)); }
@@ -98,7 +124,7 @@ export class MemoryView {
 
   _dispose() {
     if (this.mesh) { this.group.remove(this.mesh); this.mesh.geometry.dispose(); this.mesh.material.dispose(); this.mesh = null; }
-    if (this.splat) { this.group.remove(this.splat); this.splat.dispose?.(); this.splat = null; }
+    if (this.splat) { const v = this.splat; this.group.remove(v); this.splat = null; Promise.resolve(v.dispose()).catch(e => console.warn('splat dispose', e)); }
   }
 
   // head: {x,y} in -1..1 ; returns the timeline dim amount (0..1)

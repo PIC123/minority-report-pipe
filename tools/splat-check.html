@@ -1,0 +1,34 @@
+<!doctype html>
+<meta charset="utf-8"><title>splat check</title>
+<style>html,body{margin:0;height:100%;background:#05080d;color:#dbeaf5;font:12px monospace}#info{position:fixed;left:8px;top:8px;white-space:pre}canvas{display:block}</style>
+<script type="importmap">{ "imports": { "three": "../vendor/three/three.module.js", "three/addons/": "../vendor/three/addons/", "@mkkellogg/gaussian-splats-3d": "https://cdn.jsdelivr.net/npm/@mkkellogg/gaussian-splats-3d@0.4.6/build/gaussian-splats-3d.module.js" } }</script>
+<div id="info">loading…</div>
+<script type="module">
+// Minimal viewer to sanity-check a splat file and find splatRotation / splatFit values for timeline.json.
+//   tools/splat-check.html?file=../assets/splats/nike.splat&mode=parent|option&rot=1,0,0,0&fit=0.9
+import * as THREE from 'three';
+import * as GS from '@mkkellogg/gaussian-splats-3d';
+const q = new URLSearchParams(location.search), file = q.get('file') || '../assets/splats/nike.splat', mode = q.get('mode') || 'parent';
+const rot = (q.get('rot') || '1,0,0,0').split(',').map(Number), fit = +(q.get('fit') || .9);
+const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setPixelRatio(1); renderer.setSize(innerWidth, innerHeight); document.body.append(renderer.domElement);
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#05080d');
+const H = innerHeight, camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 10, 6000);
+const camDist = (H / 2) / Math.tan(THREE.MathUtils.degToRad(20)); camera.position.set(0, 0, camDist); camera.lookAt(0, 0, 0);
+scene.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(innerWidth * .6, H * .6)), new THREE.LineBasicMaterial({ color: '#5fe8ff' })));
+const info = document.getElementById('info'), t0 = performance.now();
+const viewer = new GS.DropInViewer({ gpuAcceleratedSort: false, sharedMemoryForWorkers: false, showLoadingUI: false, sphericalHarmonicsDegree: 0 });
+await viewer.addSplatScene(file, { showLoadingUI: false, rotation: rot, splatAlphaRemovalThreshold: 5 });
+const box = viewer.viewer.splatMesh.computeBoundingBox(true), size = new THREE.Vector3(), center = new THREE.Vector3(); box.getSize(size); box.getCenter(center);
+const s = fit * H * .6 / Math.max(size.y, size.x * H / innerWidth, size.z * .5);
+const holder = new THREE.Group();
+if (mode === 'parent') { holder.add(viewer); holder.scale.setScalar(s); holder.position.copy(center).multiplyScalar(-s); }
+else { // re-add with the scale baked into the scene transform
+  await viewer.removeSplatScene(0, false);
+  await viewer.addSplatScene(file, { showLoadingUI: false, rotation: rot, scale: [s, s, s], position: center.clone().multiplyScalar(-s).toArray(), splatAlphaRemovalThreshold: 5 });
+  holder.add(viewer);
+}
+scene.add(holder);
+window.__check = { viewer, holder, s, size: size.toArray(), center: center.toArray() };
+function loop() { requestAnimationFrame(loop); renderer.render(scene, camera); const v = viewer.viewer; info.textContent = `${file}\nmode ${mode}  splats ${v.splatMesh.getSplatCount()}  drawn ${v.splatMesh.geometry.instanceCount}  scale ${s.toFixed(1)}\nbbox ${size.toArray().map(x => x.toFixed(2))}  center ${center.toArray().map(x => x.toFixed(2))}\nfade ${v.splatMesh.material.uniforms.visibleRegionFadeStartRadius.value.toFixed(2)}/${v.splatMesh.material.uniforms.visibleRegionRadius.value.toFixed(2)}  t ${((performance.now() - t0) / 1000).toFixed(1)}s`; }
+loop();
+</script>

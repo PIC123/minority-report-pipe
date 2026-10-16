@@ -27,7 +27,15 @@ Click **Start camera**, stand about an arm's length back, keep your hand inside 
 | Head moves | Parallax. Subtle on the timeline, strong inside an open memory |
 | While a memory is open: pinch-drag or flick | Previous / next memory |
 
-Mouse: drag to grab, click to open, wheel to scroll, ctrl+wheel to zoom, mouse position stands in for the head. Keys: `←` `→` `Esc` `f`.
+Mouse: drag to grab, click to open, wheel to scroll, ctrl+wheel to zoom, mouse position stands in for the head. Keys: `←` `→` `Esc` `f`, `t` for the tuning panel.
+
+### Tuning the feel
+
+Every threshold lives in `src/tune.js` (pose classification, pinch hysteresis, cursor gain and smoothing, dwell time and radius, flick speed, push ratio, head gain). Press `t` or the **Tune** button for sliders that change them live; values persist in `localStorage` and can be forced from the URL (`?pinchOn=0.28&dwellMs=500`). When a set feels right, **copy** prints the changed values as JSON — paste them into the defaults in `tune.js`.
+
+The mirror view (click it to enlarge) draws the hand skeleton, the thumb–index pinch line and a readout per hand: pose, `pinch` distance against the active threshold, `palm` size, and per-finger `curl` ratios (>1 straight, <1 curled), plus push ratio, cursor velocity, dwell progress and tracker fps. All of it is also available from the console as `__portal.snapshot()`.
+
+Hand metrics are measured in aspect-corrected units (frame height = 1), so rotating the hand or changing the camera resolution does not change pinch or palm numbers.
 
 Touch (phones/tablets): swipe, tap, two-finger pinch, swipe down to close. Device tilt stands in for the head until you tap **Head tracking** (front camera, face only).
 
@@ -41,7 +49,7 @@ Everything lives in `data/timeline.json`. Each entry:
  "depthScale":0.35, "splat":"assets/splats/tangible-bits.ksplat"}
 ```
 
-`img`/`depth` default to `assets/img/<id>.jpg` and `assets/depth/<id>.png`. `splat` is optional; if set, the memory opens as a Gaussian splat instead of a depth-displaced photo (`splatPosition`/`splatRotation`/`splatScale` tune placement). `hue` only tints the placeholder art.
+`img`/`depth` default to `assets/img/<id>.jpg` and `assets/depth/<id>.png`. `splat` is optional; if set, the memory opens as a Gaussian splat instead of a depth-displaced photo. The splat is auto-fitted into the window from its (2–98 percentile) bounds; `splatFit` (default 0.9, fraction of the window it fills), `splatScale` (extra multiplier), `splatPosition` (px offset) and `splatRotation` (quaternion `[x,y,z,w]`, default `[1,0,0,0]` = 180° about X because most scans come out y-down) tune placement. `tools/splat-check.html?file=…&rot=…&fit=…` is a bare viewer for finding those values. `credit` is shown nowhere yet but keeps the image attribution with the entry.
 
 **The shipped entries are placeholders.** Dates, names and attributions were sketched quickly for the prototype and need checking against the Lab's own archive before anyone sees this.
 
@@ -56,7 +64,7 @@ Uses Depth Anything V2 (small) on CPU, a couple of seconds per image. Bigger `de
 
 ### Splats
 
-Capture with Polycam / Luma / Scaniverse / Nerfstudio, export `.ply`, then convert to `.ksplat` for faster loading with the converter in `@mkkellogg/gaussian-splats-3d`. Keep each under ~30 MB for the web. The splat path is wired but not yet exercised with a real file.
+Capture with Polycam / Luma / Scaniverse / Nerfstudio, export `.ply`, then convert to `.ksplat` for faster loading with the converter in `@mkkellogg/gaussian-splats-3d`. Keep each under ~30 MB for the web. `assets/splats/nike.splat` (8.7 MB, from the `cakewalk/splat-data` set on Hugging Face) is the reference file the path was exercised with. Two things learned the hard way, both handled in `memory.js`: the fit scale must be baked into the splat scene's transform (scaling a parent `Object3D` draws nothing), and `gpuAcceleratedSort` must stay off in 0.4.6 (it never uploads centers to the sort worker and draws 0 splats).
 
 ## Layout
 
@@ -70,8 +78,10 @@ src/gestures.js     poses → intents (select, drag, flick, zoom, push)
 src/input-touch.js  mouse / touch / tilt producing the same intents
 src/hud.js          cursor, dwell ring, gesture flashes
 data/timeline.json  content
-tools/              placeholder generator, depth-map script
+tools/              placeholder generator, depth-map script, splat-check viewer, headless checks
 ```
+
+`tools/headless/` drives the page in headless Chromium with a fake webcam (MediaPipe's own hand photos) and with synthetic frames straight into the gesture engine, so the camera path can be regression-tested without a camera. See its README.
 
 ## Toward the projector wall
 

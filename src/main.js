@@ -4,6 +4,8 @@ import { Hud } from './hud.js';
 import { PointerInput } from './input-touch.js';
 import { GestureEngine } from './gestures.js';
 import { Tracker, drawDebug } from './tracker.js';
+import { TUNE } from './tune.js';
+import { buildTunePanel } from './tune-panel.js';
 
 const $ = id => document.getElementById(id);
 const stage = $('stage'), gl = $('gl'), hudCanvas = $('hud'), video = $('cam'), pip = $('pip'), pipc = $('pipc');
@@ -22,6 +24,8 @@ if (pointer.touch) stage.classList.add('touch');
 // ---------------------------------------------------------------- state
 const S = { scroll: 0, scrollV: 0, zoom: 1, targetZoom: 1, head: { x: 0, y: 0 }, headT: { x: 0, y: 0 }, hover: null, scrollTarget: null, drag: null, zoom0: 1, scroll0: 0, current: null, memDrag: 0 };
 S.scroll = -(2004 - data.range[0]) * PX_PER_YEAR;
+// phones: start zoomed out so a card is not two thirds of the screen
+S.zoom = S.targetZoom = Math.max(.5, Math.min(1, innerWidth / 900)); S.scroll *= S.zoom;
 const minScroll = () => -(scene.trackLen * S.zoom - scene.W * .25), maxScroll = () => scene.W * .25;
 
 function status(mode, detail) { $('st-mode').textContent = mode; $('st-detail').textContent = detail; }
@@ -56,7 +60,7 @@ function wire(eng) {
   eng.on('tap', ({ x, y }) => { if (memory.isOpen) return; const c = scene.pick(x, y); if (c) { openCard(c); gesture('open'); } });
   eng.on('push', () => closeMemory());
   eng.on('wheel', ({ dx, dy, ctrl }) => { if (memory.isOpen) { if (Math.abs(dx) > 30) step(dx > 0 ? 1 : -1); return; } if (ctrl) S.targetZoom = Math.min(2.4, Math.max(.5, S.targetZoom * (1 - dy * .01))); else { S.scroll -= dx + dy * .6; S.scrollV = 0; S.scrollTarget = null; } });
-  eng.on('key', k => { if (k === 'Escape') closeMemory(); if (k === 'ArrowRight') memory.isOpen ? step(1) : (S.scrollV = -2200); if (k === 'ArrowLeft') memory.isOpen ? step(-1) : (S.scrollV = 2200); if (k === 'f') toggleFullscreen(); });
+  eng.on('key', k => { if (k === 'Escape') closeMemory(); if (k === 't') tunePanel.toggle(); if (k === 'ArrowRight') memory.isOpen ? step(1) : (S.scrollV = -2200); if (k === 'ArrowLeft') memory.isOpen ? step(-1) : (S.scrollV = 2200); if (k === 'f') toggleFullscreen(); });
 }
 wire(pointer); wire(gestures);
 
@@ -65,14 +69,18 @@ async function startCamera(handsToo) {
   const b = handsToo ? $('btn-start') : $('btn-head'); b.disabled = true; b.textContent = 'Loading…';
   try {
     tracker = await new Tracker(video).start({ hands: handsToo, face: true });
-    pipc.width = video.videoWidth; pipc.height = video.videoHeight; pip.classList.remove('off');
-    $('btn-start').hidden = true; $('btn-head').hidden = true; $('btn-pip').hidden = false;
+    pipc.width = 640; pipc.height = Math.round(640 * video.videoHeight / video.videoWidth) || 480; pip.classList.remove('off');
+    $('btn-start').hidden = true; $('btn-head').hidden = true; $('btn-pip').hidden = false; b.disabled = false; b.textContent = handsToo ? 'Start camera' : 'Head tracking';
     if (handsToo) { input = gestures; status('hands', 'hand + head tracking live'); } else status('touch', 'head tracking live');
   } catch (err) { console.error(err); b.disabled = false; b.textContent = handsToo ? 'Start camera' : 'Head tracking'; status('error', (err?.message || String(err)).slice(0, 70)); }
 }
 $('btn-start').onclick = () => startCamera(true);
 $('btn-head').onclick = () => startCamera(false);
 $('btn-pip').onclick = () => pip.classList.toggle('off');
+pip.onclick = () => pip.classList.toggle('big');     // click the mirror to enlarge it while tuning
+const tunePanel = buildTunePanel(stage);
+$('btn-tune').onclick = () => tunePanel.toggle();
+if (new URLSearchParams(location.search).get('tune')) tunePanel.toggle();
 function toggleFullscreen() { if (document.fullscreenElement) document.exitFullscreen?.(); else stage.requestFullscreen?.().catch(() => {}); }
 $('btn-fs').onclick = toggleFullscreen;
 if (pointer.touch) {
@@ -89,7 +97,7 @@ let last = performance.now();
 function loop(now) {
   requestAnimationFrame(loop);
   const dt = Math.min(.05, (now - last) / 1000); last = now;
-  if (tracker) { try { const f = tracker.read(now); if (f) { lastFrame = f; if (input === gestures) gestures.feed(f, now); else if (f.head) { S.headT.x = (f.head.x - .5) * 2; S.headT.y = (f.head.y - .5) * 2; } if (!pip.classList.contains('off')) drawDebug(pipc.getContext('2d'), pipc.width, pipc.height, f); } } catch (e) { console.warn(e); } }
+  if (tracker) { try { const f = tracker.read(now); if (f) { lastFrame = f; if (input === gestures) gestures.feed(f, now); else if (f.head) { S.headT.x = (f.head.x - .5) * 2 * TUNE.headGain; S.headT.y = (f.head.y - .5) * 2 * TUNE.headGain; } if (!pip.classList.contains('off')) drawDebug(pipc.getContext('2d'), pipc.width, pipc.height, f, { ...gestures.debug, fps: tracker.fps, delegate: tracker.delegate }); } } catch (e) { console.warn(e); } }
   // physics
   if (S.scrollTarget != null) { S.scroll += (S.scrollTarget - S.scroll) * .12; if (Math.abs(S.scrollTarget - S.scroll) < .5) S.scrollTarget = null; }
   else if (!S.drag) { S.scroll += S.scrollV * dt; S.scrollV *= Math.pow(.08, dt); }
@@ -107,3 +115,8 @@ function loop(now) {
   hud.draw(cur, input.dwell || 0, input.second, now);
 }
 requestAnimationFrame(loop);
+
+// debug hook for headless tests and the console: __portal.snapshot()
+window.__portal = { S, scene, memory, gestures, tune: TUNE, get tracker() { return tracker; }, get frame() { return lastFrame; },
+  snapshot: () => ({ mode: $('st-mode').textContent, cursor: { ...input.cursor }, dwell: input.dwell, scroll: S.scroll, zoom: S.zoom, open: memory.isOpen, current: S.current?.userData.entry.id || null, memState: memory.state, fps: tracker?.fps, delegate: tracker?.delegate,
+    hands: (lastFrame?.hands || []).map(h => ({ label: h.label, pose: h.pose, pinchDist: +h.pinchDist.toFixed(3), palm: +h.palm.toFixed(3), ext: h.ext, curl: h.curl.map(r => +r.toFixed(2)), tip: { x: +h.tip.x.toFixed(3), y: +h.tip.y.toFixed(3) } })), head: lastFrame?.head || null, debug: { ...gestures.debug } }) };
