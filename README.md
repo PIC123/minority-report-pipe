@@ -89,4 +89,4 @@ For the three-projector TouchDesigner version: run this page fullscreen in a TD 
 
 ## Deploy
 
-Push to `main`; the GitHub Actions workflow publishes to GitHub Pages. Enable Pages → Source: GitHub Actions in the repo settings once.
+Vercel, as a plain static site: Framework "Other", no build command, output directory `.`. `vercel.json` adds the cross-origin isolation headers (which let the splat sorter use shared memory; `memory.js` falls back to copying when they are absent) and cache rules. Every branch gets a preview URL; `main` is production. Any other static host works too, and `python3 -m http.server` for local work.

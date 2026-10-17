@@ -64,7 +64,7 @@ export class MemoryView {
     if (!wasOpen) { this.state = 'opening'; this.progress = 0; if (from) { this.from.copy(from.position); this.fromScale = from.scale; } else { this.from.set(0, 0, 0); this.fromScale = .3; } }
     else this.state = 'open';   // switching memories: stay in place, just re-reveal
     const W = this.scene.W, H = this.scene.H;
-    const maxW = Math.min(W * .74, 1100), maxH = Math.min(H * .55, H - 330);   // leave room for the caption below
+    const maxW = Math.min(W * .74, 1100), maxH = H * .52;   // sits above centre, caption fits below
     if (entry.splat) { await this._openSplat(entry, maxW, maxH); return; }
     await this._openImage(entry, maxW, maxH);
   }
@@ -87,7 +87,8 @@ export class MemoryView {
     try {
       const GS = await import('@mkkellogg/gaussian-splats-3d');
       // gpuAcceleratedSort stays off: with it on, 0.4.6 never uploads splat centers to the sort worker and draws 0 splats.
-      const viewer = new GS.DropInViewer({ gpuAcceleratedSort: false, sharedMemoryForWorkers: false, showLoadingUI: false, sphericalHarmonicsDegree: 0 });
+      // shared memory for the sort worker needs cross-origin isolation (vercel.json sets the headers); fall back to copying otherwise
+      const viewer = new GS.DropInViewer({ gpuAcceleratedSort: false, sharedMemoryForWorkers: !!self.crossOriginIsolated, showLoadingUI: false, sphericalHarmonicsDegree: 0 });
       const v = viewer.viewer, format = GS.LoaderUtils.sceneFormatFromPath(entry.splat);
       if (format == null) throw new Error('unknown splat format: ' + entry.splat);
       // preflight: a 404 inside the library surfaces as an uncaught error while its promise never settles

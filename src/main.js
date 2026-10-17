@@ -92,6 +92,12 @@ if (pointer.touch) {
   stage.addEventListener('pointerdown', () => { if (!pointer.tiltOn && !tracker) pointer.enableTilt(); }, { once: true });
 } else status('mouse', 'move the mouse · drag to grab · click to open · wheel to scroll');
 
+// ---------------------------------------------------------------- ephemeral chrome: the overlay fades after a few idle seconds and returns on any movement
+let lastActive = performance.now(), lastCursor = { x: 0, y: 0 };
+function active() { lastActive = performance.now(); stage.classList.remove('idle'); }
+for (const ev of ['pointermove', 'pointerdown', 'wheel', 'keydown', 'touchstart']) addEventListener(ev, active, { passive: true });
+stage.classList.add('boot'); setTimeout(() => stage.classList.remove('boot'), 2600);
+
 // ---------------------------------------------------------------- loop
 function resize() { scene.resize(); hud.resize(); pointer.resize(scene.W, scene.H); gestures.resize(scene.W, scene.H); }
 addEventListener('resize', resize); resize();
@@ -116,6 +122,8 @@ function loop(now) {
   scene.update(dt, now / 1000, { scroll: S.scroll, zoom: S.zoom, head: S.head, dim });
   scene.render();
   hud.draw(cur, input.dwell || 0, input.second, now);
+  if (cur.on && Math.hypot(cur.x - lastCursor.x, cur.y - lastCursor.y) > 2) { lastCursor = { x: cur.x, y: cur.y }; active(); }
+  if (now - lastActive > 6000 && !stage.classList.contains('idle')) stage.classList.add('idle');
 }
 requestAnimationFrame(loop);
 

@@ -12,8 +12,11 @@ export class Hud {
       g.save(); g.shadowColor = col; g.shadowBlur = 18; g.strokeStyle = col; g.fillStyle = col; g.lineWidth = 1.6;
       g.beginPath(); g.arc(x, y, r, 0, 6.283); g.stroke();
       g.beginPath(); g.arc(x, y, 2.5, 0, 6.283); g.fill();
-      if (pose === 'open' || pose === 'none') { g.beginPath(); for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { g.moveTo(x + dx * 24, y + dy * 24); g.lineTo(x + dx * 32, y + dy * 32); } g.stroke(); }
-      if (dwell > 0) { g.lineWidth = 3; g.beginPath(); g.arc(x, y, 24, -Math.PI / 2, -Math.PI / 2 + dwell * 6.283); g.stroke(); }
+      // slowly turning reticle ticks: reads as a live instrument rather than a mouse pointer
+      const rot = now / 4000; g.beginPath();
+      for (let i = 0; i < 4; i++) { const a = rot + i * Math.PI / 2, r0 = r + 10, r1 = r + 18; g.moveTo(x + Math.cos(a) * r0, y + Math.sin(a) * r0); g.lineTo(x + Math.cos(a) * r1, y + Math.sin(a) * r1); }
+      g.stroke();
+      if (dwell > 0) { g.lineWidth = 3; g.beginPath(); g.arc(x, y, 26, -Math.PI / 2, -Math.PI / 2 + dwell * 6.283); g.stroke(); g.lineWidth = 1; g.globalAlpha = .5; g.beginPath(); for (let i = 0; i < 12; i++) { const a = i * Math.PI / 6; g.moveTo(x + Math.cos(a) * 30, y + Math.sin(a) * 30); g.lineTo(x + Math.cos(a) * 34, y + Math.sin(a) * 34); } g.stroke(); g.globalAlpha = 1; }
       g.restore();
     }
     if (second) { g.save(); g.strokeStyle = 'rgba(179,136,255,.85)'; g.shadowColor = g.strokeStyle; g.shadowBlur = 12; g.lineWidth = 1.4; g.beginPath(); g.arc(second.x, second.y, second.pose === 'pinch' || second.pose === 'fist' ? 8 : 16, 0, 6.283); g.stroke(); g.restore(); }

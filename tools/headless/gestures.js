@@ -27,7 +27,7 @@ const { chromium } = require('playwright');
     // 3. open hand then point again elsewhere → select (closes memory)
     await run([[hand(n.x, n.y, 'open')], [hand(n.x, n.y, 'open')]]); ev.length = 0;
     const trace = []; for (let i = 0; i < 28; i++) { await run([[hand(.5, .5, 'point')]]); trace.push([Math.round(G.cursor.x), Math.round(G.cursor.y), +G.dwell.toFixed(2), G._lock ? 'L' : '-', G._dwell ? Math.round(t - G._dwell.t) : null]); } out.trace3 = trace;
-    out.secondSelect = ev.includes('select'); evs.t3 = [...ev]; await sleep(1200); out.closedAfter = !P.memory.isOpen;
+    out.secondSelect = ev.includes('select'); evs.t3 = [...ev]; await sleep(3000); out.closedAfter = !P.memory.isOpen;
     // 4. pinch drag: 300px to the right over 15 frames, release
     ev.length = 0; const s0 = P.S.scroll; const fr = []; for (let i = 0; i <= 15; i++) { const q = toN(600 + i * 20, 450); fr.push([hand(q.x, q.y, 'pinch')]); } fr.push([hand(toN(900, 450).x, toN(900, 450).y, 'open')]);
     await run(fr); out.dragEvents = [ev[0], ev.includes('drag'), ev[ev.length - 1]]; out.scrollMoved = Math.round(P.S.scroll - s0);
